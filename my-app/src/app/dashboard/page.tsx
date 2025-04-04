@@ -80,8 +80,5 @@ const Dashboard = () => {
     </div>
   );
 };
-useEffect(() => {
-  console.log("Git test"); // ✅ This is the line we're testing
-}, []);
 
 export default Dashboard;

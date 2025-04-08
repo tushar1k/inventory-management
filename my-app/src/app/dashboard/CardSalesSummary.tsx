@@ -26,10 +26,11 @@ const CardSalesSummary = () => {
     }, 0) || 0;
 
   const highestValueData = salesData.reduce((acc, curr) => {
-    return acc.totalValue > curr.totalValue ? acc : curr;
-  }, salesData[0] || {});
+            return acc.totalValue > curr.totalValue ? acc : curr;
 
-  const highestValueDate = highestValueData.date
+  }, salesData[0]);
+
+  const highestValueDate = highestValueData?.date
     ? new Date(highestValueData.date).toLocaleDateString("en-US", {
         month: "numeric",
         day: "numeric",

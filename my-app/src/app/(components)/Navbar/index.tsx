@@ -10,7 +10,7 @@ import React from "react";
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector(
-    (state) => state.global.isSidebarCollapsed
+    (state) => state.global.isSidebarCollapsed,
   );
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
@@ -28,8 +28,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center gap-5">
         <button
           className="px-3 py-3 bg-gray-100 rounded-full hover:bg-blue-100"
-          onClick={toggleSidebar}
-        >
+          onClick={toggleSidebar}>
           <Menu className="w-4 h-4" />
         </button>
 
@@ -67,13 +66,21 @@ const Navbar = () => {
           <hr className="w-0 h-7 border border-solid border-l border-gray-300 mx-3" />
           <div className="flex items-center gap-3 cursor-pointer">
             <Image
-              src="https://s3-inventorymanagement-image-bucket.s3.ap-south-1.amazonaws.com/profile.jpg"
+              src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/assets/profile.jpg`}
+              alt="profile"
+              width={36}
+              height={36}
+              className="rounded-full"
+            />
+
+            {/* <Image
+              // src="https://s3-inventorymanagement-image-bucket.s3.ap-south-1.amazonaws.com/profile.jpg"
               alt="Profile"
               width={50}
               height={50}
               className="rounded-full h-full object-cover"
-            />
-            <span className="font-semibold">Ed Roh</span>
+            /> */}
+            <span className="font-semibold"> USER</span>
           </div>
         </div>
         <Link href="/settings">

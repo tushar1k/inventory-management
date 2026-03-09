@@ -30,7 +30,7 @@ export interface PurchaseSummary {
 }
 
 export interface ExpenseSummary {
-  expenseSummarId: string;
+  expenseSummaryId: string;
   totalExpenses: number;
   date: string;
 }
@@ -57,14 +57,18 @@ export interface User {
 }
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL }),
   reducerPath: "api",
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+  }),
   tagTypes: ["DashboardMetrics", "Products", "Users", "Expenses"],
+
   endpoints: (build) => ({
     getDashboardMetrics: build.query<DashboardMetrics, void>({
       query: () => "/dashboard",
       providesTags: ["DashboardMetrics"],
     }),
+
     getProducts: build.query<Product[], string | void>({
       query: (search) => ({
         url: "/products",
@@ -72,18 +76,21 @@ export const api = createApi({
       }),
       providesTags: ["Products"],
     }),
+
     createProduct: build.mutation<Product, NewProduct>({
       query: (newProduct) => ({
         url: "/products",
         method: "POST",
         body: newProduct,
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ["Products", "DashboardMetrics"],
     }),
+
     getUsers: build.query<User[], void>({
       query: () => "/users",
       providesTags: ["Users"],
     }),
+
     getExpensesByCategory: build.query<ExpenseByCategorySummary[], void>({
       query: () => "/expenses",
       providesTags: ["Expenses"],

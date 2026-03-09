@@ -1,45 +1,11 @@
-// import express from "express";
-// import dotenv from "dotenv";
-// import bodyParser from "body-parser";
-// import cors from "cors";
-// import helmet from "helmet";
-// import morgan from "morgan";
-// /* ROUTE IMPORTS */
-// import dashboardRoutes from "./routes/dashboardRoutes";
-// import productRoutes from "./routes/productRoutes";
-// import userRoutes from "./routes/userRoutes";
-// import expenseRoutes from "./routes/expenseRoutes";
-
-// /* CONFIGURATIONS */
-// dotenv.config();
-// const app = express();
-// app.use(express.json());
-// app.use(helmet());
-// app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-// app.use(morgan("common"));
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(cors());
-
-// /* ROUTES */
-// app.use("/dashboard", dashboardRoutes); // http://localhost:8000/dashboard
-// app.use("/products", productRoutes); // http://localhost:8000/products
-// app.use("/users", userRoutes); // http://localhost:8000/users
-// app.use("/expenses", expenseRoutes); // http://localhost:8000/expenses
-
-// /* SERVER */
-// const port = Number(process.env.PORT) || 3001;
-// app.listen(port, "0.0.0.0", () => {
-//   console.log(`Server running on port ${port}`);
-// });
-
-
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import path from "path";
+
 /* ROUTE IMPORTS */
 import dashboardRoutes from "./routes/dashboardRoutes";
 import productRoutes from "./routes/productRoutes";
@@ -49,6 +15,7 @@ import expenseRoutes from "./routes/expenseRoutes";
 /* CONFIGURATIONS */
 dotenv.config();
 const app = express();
+
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
@@ -57,17 +24,33 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
+/* STATIC ASSETS */
+app.use("/assets", express.static(path.join(__dirname, "../assets")));
+
 /* ROUTES */
-app.use("/dashboard", dashboardRoutes); // http://localhost:8000/dashboard
-app.use("/products", productRoutes); // http://localhost:8000/products
-app.use("/users", userRoutes); // http://localhost:8000/users
-app.use("/expenses", expenseRoutes); // http://localhost:8000/expenses
+app.use("/dashboard", dashboardRoutes);
+app.use("/products", productRoutes);
+app.use("/users", userRoutes);
+app.use("/expenses", expenseRoutes);
 
 /* SERVER */
-const port = Number(process.env.PORT) || 3001;
-const server = app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on port ${port}`);
-});
+const PORT = Number(process.env.PORT) || 3001;
 
-// Timeout setting added here (only change made)
-server.timeout = 300000; // 5 minutes timeout
+function startServer(port: number) {
+  const server = app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+
+  server.on("error", (err: any) => {
+    if (err.code === "EADDRINUSE") {
+      console.log(`Port ${port} is busy, trying ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error(err);
+    }
+  });
+
+  server.timeout = 300000;
+}
+
+startServer(PORT);
